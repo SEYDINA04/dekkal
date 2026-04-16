@@ -2,7 +2,7 @@
 
 **Version:** 1.0  
 **Date:** April 2026  
-**Team:** Aminata Sall · Babacar Ndao · Desmone Coffee  
+**Team:** Aminata Sall · Babacar Ndao · Desmond Coffie  
 **Status:** Pre-pilot · Architecture complete · Pipeline validated
 
 ---
