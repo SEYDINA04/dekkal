@@ -160,18 +160,6 @@ Merge to main → Deploy to production
 
 ---
 
-## 6. MVP milestones
-
-| Week | Deliverable |
-|---|---|---|
-| 1–2 | Data download + geospatial feature extraction | 
-| 2–3 | Static model training + validation | 
-| 3 | REST API live on production server |
-| 4 | Dashboard MVP + pilot demo | 
-| Phase 2 | Dynamic nowcasting model | 
-| Phase 2 | IoT sensor integration | 
-| Phase 2 | Multi-city expansion | 
-
 ---
 
 *Dëkkal — Know your ground.*
