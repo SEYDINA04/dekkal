@@ -162,15 +162,15 @@ Merge to main → Deploy to production
 
 ## 6. MVP milestones
 
-| Week | Deliverable | Owner |
+| Week | Deliverable |
 |---|---|---|
-| 1–2 | Data download + geospatial feature extraction | Aminata |
-| 2–3 | Static model training + validation | Aminata + Babacar |
-| 3 | REST API live on production server | Babacar |
-| 4 | Dashboard MVP + pilot demo ready | Babacar |
-| Phase 2 | Dynamic nowcasting model | Babacar |
-| Phase 2 | IoT sensor integration | Babacar |
-| Phase 2 | Multi-city expansion | Full team |
+| 1–2 | Data download + geospatial feature extraction | 
+| 2–3 | Static model training + validation | 
+| 3 | REST API live on production server |
+| 4 | Dashboard MVP + pilot demo | 
+| Phase 2 | Dynamic nowcasting model | 
+| Phase 2 | IoT sensor integration | 
+| Phase 2 | Multi-city expansion | 
 
 ---
 
