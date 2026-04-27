@@ -1,0 +1,4 @@
+band,clay_0-5cm_mean_p10,clay_0-5cm_mean_p50,clay_0-5cm_mean_p90,clay_5-15cm_mean_p10,clay_5-15cm_mean_p50,clay_5-15cm_mean_p90,clay_15-30cm_mean_p10,clay_15-30cm_mean_p50,clay_15-30cm_mean_p90
+clay_0-5cm_mean,18.1,20.5,25.1,,,,,,
+clay_5-15cm_mean,,,,16.9,19.4,24.3,,,
+clay_15-30cm_mean,,,,,,,17.1,19.6,23.2

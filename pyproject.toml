@@ -1,0 +1,26 @@
+[project]
+name = "floodsenx"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "earthaccess>=0.17.0",
+    "earthengine-api>=1.7.22",
+    "fastapi>=0.136.1",
+    "geopandas>=1.1.3",
+    "ipykernel>=7.2.0",
+    "netcdf4>=1.7.4",
+    "numpy>=2.4.4",
+    "pandas>=3.0.2",
+    "pydantic>=2.13.3",
+    "scikit-learn>=1.8.0",
+    "uvicorn>=0.46.0",
+    "xarray>=2026.4.0",
+    "xgboost>=3.2.0",
+]
+
+[tool.uv.workspace]
+members = [
+    "backend",
+]

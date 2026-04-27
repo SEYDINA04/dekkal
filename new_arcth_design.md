@@ -1,0 +1,18 @@
+SOURCE PRIMAIRE (Géo Sénégal — gratuit, légitime)
+├── MNT 5m sur Dakar (TERRAIN)
+├── Occupation du sol 1:50K (URBAIN/BÂTI)
+├── Vectorielles 1:50K (HYDRO + ROUTES)
+├── ALOS 2.5m (SATELLITE OPTIQUE)
+└── Données PGIIS (RISQUE HISTORIQUE)
+
+SOURCE COMPLÉMENTAIRE (International — gratuit)
+├── Sentinel-1 SAR (DÉTECTION EAU)
+├── Sentinel-2 (NDWI, NDVI temps réel)
+├── CHIRPS (PLUIE HISTORIQUE)
+├── GPM IMERG (PLUIE NRT)
+├── ERA5-Land (MÉTÉO RÉANALYSE)
+└── SoilGrids (PROPRIÉTÉS SOL)
+
+SOURCE INSTITUTIONNELLE (Phase 2 — partenariat)
+├── ANACIM Band-X radar (NRT)
+└── ONAS (drainage urbain temps réel)
