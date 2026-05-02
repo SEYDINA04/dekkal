@@ -35,3 +35,19 @@ Thumbs.db
 
 # Logs
 *.log
+# Modèles ML — trop lourds pour git
+*.pkl
+*.joblib
+
+# Données sensibles
+data-pipeline/dekkal_pikine*.csv
+data-pipeline/dekkal_xgboost*.csv
+data-pipeline/dekkal_pikine*.py
+data-pipeline/extract_pikine*.py
+data-pipeline/train_xgboost_v3.py
+
+# Fichiers PDF pitch
+*.pdf
+
+# Notes
+notes

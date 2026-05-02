@@ -1,0 +1,46 @@
+{
+  "Dakar_Centre": {
+    "risk_score_mean": 70.69999694824219,
+    "risk_score_max": 95.0,
+    "flood_frequency": 0.8,
+    "elevation_mean": 5.51,
+    "clay_mean": 28.0,
+    "lat_min": 14.72,
+    "lat_max": 14.85,
+    "lon_min": -17.52,
+    "lon_max": -17.38
+  },
+  "Guediawaye": {
+    "risk_score_mean": 78.30000305175781,
+    "risk_score_max": 94.0999984741211,
+    "flood_frequency": 0.8,
+    "elevation_mean": 4.02,
+    "clay_mean": 24.0,
+    "lat_min": 14.76,
+    "lat_max": 14.85,
+    "lon_min": -17.42,
+    "lon_max": -17.3
+  },
+  "Keur_Massar": {
+    "risk_score_mean": 44.099998474121094,
+    "risk_score_max": 90.5999984741211,
+    "flood_frequency": 0.7,
+    "elevation_mean": 13.8,
+    "clay_mean": 25.0,
+    "lat_min": 14.69,
+    "lat_max": 14.76,
+    "lon_min": -17.32,
+    "lon_max": -17.22
+  },
+  "Pikine": {
+    "risk_score_mean": 62.400001525878906,
+    "risk_score_max": 95.19999694824219,
+    "flood_frequency": 0.7,
+    "elevation_mean": 4.97,
+    "clay_mean": 21.5,
+    "lat_min": 14.68,
+    "lat_max": 14.78,
+    "lon_min": -17.42,
+    "lon_max": -17.28
+  }
+}

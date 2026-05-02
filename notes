@@ -1,0 +1,41 @@
+**Problem**
+
+Flood damage costs Senegal over 40 billion FCFA every year. Yet insurers in Dakar are still pricing flood risk the same way they did 20 years ago — at the neighborhood level, using historical averages. They have no way to know that two houses 100 meters apart can have completely different flood risk profiles. The result is systematic mispricing — safe addresses overpay, risky addresses underpay, and when floods hit, insurers absorb losses they never anticipated.
+
+---
+
+**Solution**
+
+Dëkkal is a B2B SaaS platform that delivers address-level flood risk scores to IARD insurers in Dakar. We combine satellite imagery, terrain data, climate extremes, and drainage network analysis to produce a single risk score — zero to one hundred — for any address, updated every quarter during the rainy season.
+
+---
+
+**How it works**
+
+Our AI engine has two layers. The first is a statistical layer powered by XGBoost, which answers the structural question — given the elevation, soil permeability, drainage access, and historical satellite flood signals at this address, how flood-prone is it by nature? The second is a temporal layer powered by LSTM, currently in development for version two, which will answer the dynamic question — given recent rainfall accumulation and soil saturation, is the risk elevated right now?
+
+Together, these two layers transform a raw address into three interpretable components: historical risk, structural vulnerability, and extreme scenario risk. Every score comes with a confidence interval, a minimum of three explanatory factors, and a recommended action for the underwriter.
+
+---
+
+**Why it matters**
+
+Our data shows that 59% of urban Dakar sits at zero meters elevation with near-zero slope. Water has nowhere to go. Traditional models miss this entirely because they average across entire neighborhoods. Dëkkal scores at the address level — and that difference is exactly the mispricing gap we eliminate for insurers.
+
+---
+
+**Traction**
+
+We have validated our pipeline on ten years of satellite data across four Dakar neighborhoods. Our API is live on port 8001, geocoding addresses in real time and returning structured JSON scores with full explainability. We are in active discussions with ANACIM and ONAS for institutional data partnerships, and we are targeting NSIA and CNAAS as our first pilot clients.
+
+---
+
+**The ask**
+
+We are raising pre-seed funding to expand our training dataset, complete the temporal layer, and sign our first commercial contract with a Senegalese IARD insurer by end of 2026.
+
+---
+
+**One line to close**
+
+> *"Our competitors price flood risk at the neighborhood level. Dëkkal prices it at the address. That one hundred meter difference is worth billions in mis-priced premiums across West Africa."*

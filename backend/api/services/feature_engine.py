@@ -124,6 +124,8 @@ def extract_all_features(lat: float, lon: float) -> dict:
     era5     = get_era5_soil_moisture(lat, lon)
 
     features = {**terrain, **precip, **sar, **drainage, **soil, **era5}
+    features['_lat'] = lat
+    features['_lon'] = lon
     features['p99_ensemble'] = features.get('p99_mm_day', 34.0)
     features['p95_ensemble'] = features.get('p95_mm_day', 17.0)
     return features

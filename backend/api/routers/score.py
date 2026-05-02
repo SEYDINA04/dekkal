@@ -1,13 +1,13 @@
 """
-Dëkkal — Score Router v1.1
-POST /score — address OR coordinates → risk score
-Geocoding : Nominatim (OpenStreetMap)
+Dëkkal — Score Router v2.0
+XGBoost ML model replaces rule-based engine
+Author : Babacar Ndao
 """
 import time
 from fastapi import APIRouter, HTTPException
 from api.models.schemas import ScoreRequest, ScoreResponse
 from api.services.feature_engine import extract_all_features
-from api.services.scoring_engine import score_location
+from api.services.ml_model import predict_flood_risk
 from api.services.geocoder import geocode_address, suggest_alternatives
 
 router = APIRouter(prefix="/api/v1", tags=["scoring"])
@@ -18,64 +18,55 @@ DAKAR_BBOX = {
 }
 
 
-def validate_zone(lat: float, lon: float):
+def validate_zone(lat, lon):
     if not (DAKAR_BBOX["lat_min"] <= lat <= DAKAR_BBOX["lat_max"] and
             DAKAR_BBOX["lon_min"] <= lon <= DAKAR_BBOX["lon_max"]):
-        raise HTTPException(
-            status_code=400,
-            detail={
-                "error": "zone_not_covered",
-                "message": "Location outside Dëkkal coverage area (Dakar, Senegal)",
-                "coverage": "Dakar urban zone — lat [14.6, 14.95] lon [-17.6, -17.1]"
-            }
-        )
+        raise HTTPException(status_code=400, detail={
+            "error": "zone_not_covered",
+            "message": "Location outside Dëkkal coverage (Dakar, Senegal)"
+        })
 
 
 @router.post("/score", response_model=ScoreResponse)
 async def score_address(request: ScoreRequest):
     start_ms = int(time.time() * 1000)
 
-    # ── VALIDATION INPUT ─────────────────────────────────
-    if not request.address and (request.lat is None or request.lon is None):
-        raise HTTPException(
-            status_code=422,
-            detail={"error": "Provide either 'address' or 'lat' + 'lon'"}
-        )
+    # Input validation
+    if not request.address and (
+            request.lat is None or request.lon is None):
+        raise HTTPException(status_code=422, detail={
+            "error": "Provide 'address' or 'lat'+'lon'"
+        })
 
-    # ── GEOCODING ────────────────────────────────────────
+    # Geocoding
     if request.lat is not None and request.lon is not None:
-        lat = request.lat
-        lon = request.lon
+        lat, lon = request.lat, request.lon
         address_normalized = f"{lat}, {lon}"
-
     else:
         try:
-            lat, lon, address_normalized = geocode_address(request.address)
+            lat, lon, address_normalized = geocode_address(
+                request.address)
         except ValueError as e:
             suggestions = suggest_alternatives(request.address)
-            raise HTTPException(
-                status_code=400,
-                detail={
-                    "error": "geocoding_failed",
-                    "message": str(e),
-                    "suggestions": suggestions
-                }
-            )
+            raise HTTPException(status_code=400, detail={
+                "error": "geocoding_failed",
+                "message": str(e),
+                "suggestions": suggestions
+            })
 
-    # ── ZONE VALIDATION ──────────────────────────────────
     validate_zone(lat, lon)
 
-    # ── FEATURE EXTRACTION ───────────────────────────────
+    # Feature extraction
     try:
         features = extract_all_features(lat, lon)
     except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail={"error": "feature_extraction_failed", "detail": str(e)}
-        )
+        raise HTTPException(status_code=500, detail={
+            "error": "feature_extraction_failed",
+            "detail": str(e)
+        })
 
-    # ── SCORING ──────────────────────────────────────────
-    result = score_location(features)
+    # ML Scoring — XGBoost
+    result = predict_flood_risk(features)
 
     warning = None
     if result['confidence'] < 0.5:
@@ -85,22 +76,26 @@ async def score_address(request: ScoreRequest):
 
     return ScoreResponse(
         location={
-            "lat"               : lat,
-            "lon"               : lon,
+            "lat": lat,
+            "lon": lon,
             "address_normalized": address_normalized
         },
         score=result['score'],
         risk_level=result['risk_level'],
-        components=result['components'],
+        components={
+            "historical_risk"         : round(features.get('sar_delta_km2', 0) * 100, 1),
+            "structural_vulnerability": round((1 - features.get('elevation_m', 10) / 20) * 100, 1),
+            "extreme_scenario_risk"   : round(min(100, features.get('p99_mm_day', 34) / 50 * 100), 1),
+        },
         explanations=result['explanations'],
         decision_support=result['decision_support'],
         confidence=result['confidence'],
         warning=warning,
         meta={
-            "model_version"    : "v1.0",
+            "model_version"    : "xgboost_v1.0",
             "data_freshness"   : "2026-04",
             "processing_time_ms": processing_ms,
-            "data_completeness": result['data_completeness']
+            "data_completeness": "high" if result['confidence'] >= 0.75 else "medium"
         }
     )
 
@@ -110,5 +105,6 @@ async def health():
     return {
         "status" : "ok",
         "service": "Dëkkal Flood Risk API",
-        "version": "1.0"
+        "version": "2.0",
+        "model"  : "xgboost_v1.0"
     }

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Public AI Trust Center | Mockup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .upload-zone:hover { border-color: #3b82f6; background-color: #eff6ff; }
+        .asset-card { transition: transform 0.2s; }
+        .asset-card:hover { transform: translateY(-2px); }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900">
+
+    <!-- Header / Branding -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
+                    <span contenteditable="true" title="Click to edit logo">T</span>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight" contenteditable="true">Team [Startup Name]</h1>
+                    <p class="text-xs text-slate-500 uppercase tracking-widest">Public AI Trust Center</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
+                    Compliance: Ghana AI Strategy Ready
+                </span>
+                <button onclick="window.print()" class="text-sm bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-md transition-colors">Export Pack</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-12">
+        
+        <!-- Summary Section -->
+        <section class="mb-16">
+            <div class="bg-gradient-to-r from-blue-700 to-indigo-800 rounded-2xl p-8 text-white shadow-xl">
+                <h2 class="text-3xl font-bold mb-4">Our Commitment to Accountability</h2>
+                <p class="text-blue-100 max-w-2xl text-lg mb-6 leading-relaxed">
+                    This public trust pack provides transparency into our governance, data ethics, and algorithmic accountability standards, aligned with the Ghana National AI Strategy.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white/10 p-4 rounded-xl backdrop-blur-sm border border-white/20">
+                        <div class="text-blue-200 text-xs font-semibold mb-1">DATA SOVEREIGNTY</div>
+                        <div class="text-sm">Ghana-Based Hosting & Control</div>
+                    </div>
+                    <div class="bg-white/10 p-4 rounded-xl backdrop-blur-sm border border-white/20">
+                        <div class="text-blue-200 text-xs font-semibold mb-1">TRANSPARENCY</div>
+                        <div class="text-sm">Human-in-the-Loop Safeguards</div>
+                    </div>
+                    <div class="bg-white/10 p-4 rounded-xl backdrop-blur-sm border border-white/20">
+                        <div class="text-blue-200 text-xs font-semibold mb-1">INCLUSIVITY</div>
+                        <div class="text-sm">Localized Context-Aware Logic</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Studio Day 2: Governance & Risk -->
+        <section class="mb-12">
+            <div class="flex items-center space-x-2 mb-6">
+                <span class="flex items-center justify-center w-8 h-8 rounded-full bg-slate-800 text-white text-sm font-bold">2</span>
+                <h3 class="text-xl font-bold text-slate-800 tracking-tight">Governance Foundations & Risk Management</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- AI Governance Statement -->
+                <div class="asset-card bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col h-full">
+                    <h4 class="font-bold text-slate-800 mb-2">AI Governance Statement</h4>
+                    <p class="text-sm text-slate-500 mb-6 italic">High-level public commitment to ethical AI usage.</p>
+                    <div class="mt-auto">
+                        <label class="upload-zone block border-2 border-dashed border-slate-300 rounded-lg p-4 text-center cursor-pointer transition-all">
+                            <input type="file" class="hidden">
+                            <span class="text-xs text-slate-400">Upload PDF / Link Document</span>
+                        </label>
+                    </div>
+                </div>
+                <!-- AI Inventory List -->
+                <div class="asset-card bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col h-full">
+                    <h4 class="font-bold text-slate-800 mb-2">AI Inventory List</h4>
+                    <p class="text-sm text-slate-500 mb-6 italic">Summary of internal AI models and systems.</p>
+                    <div class="mt-auto">
+                        <label class="upload-zone block border-2 border-dashed border-slate-300 rounded-lg p-4 text-center cursor-pointer transition-all">
+                            <input type="file" class="hidden">
+                            <span class="text-xs text-slate-400">Upload CSV / PDF</span>
+                        </label>
+                    </div>
+                </div>
+                <!-- Risk Escalation Map -->
+                <div class="asset-card bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col h-full">
+                    <h4 class="font-bold text-slate-800 mb-2">Risk Escalation Map</h4>
+                    <p class="text-sm text-slate-500 mb-6 italic">Process for reporting and mitigating algorithmic risks.</p>
+                    <div class="mt-auto">
+                        <label class="upload-zone block border-2 border-dashed border-slate-300 rounded-lg p-4 text-center cursor-pointer transition-all">
+                            <input type="file" class="hidden">
+                            <span class="text-xs text-slate-400">Upload Diagram / Workflow</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Studio Day 3: Data & Applied Ethics -->
+        <section class="mb-12">
+            <div class="flex items-center space-x-2 mb-6">
+                <span class="flex items-center justify-center w-8 h-8 rounded-full bg-slate-800 text-white text-sm font-bold">3</span>
+                <h3 class="text-xl font-bold text-slate-800 tracking-tight">Applied Ethics & Data Privacy</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Data Ethics Checklist -->
+                <div class="asset-card bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col h-full">
+                    <h4 class="font-bold text-slate-800 mb-2">Data Ethics Checklist</h4>
+                    <p class="text-sm text-slate-500 mb-6 italic">Internal verification for ethical data sourcing/handling.</p>
+                    <div class="mt-auto">
+                        <label class="upload-zone block border-2 border-dashed border-slate-300 rounded-lg p-4 text-center cursor-pointer transition-all">
+                            <input type="file" class="hidden">
+                            <span class="text-xs text-slate-400">Upload Checklist Result</span>
+                        </label>
+                    </div>
+                </div>
+                <!-- Acceptable Use Policy -->
+                <div class="asset-card bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col h-full">
+                    <h4 class="font-bold text-slate-800 mb-2">Acceptable Use Policy</h4>
+                    <p class="text-sm text-slate-500 mb-6 italic">Rules for user interaction with AI features.</p>
+                    <div class="mt-auto">
+                        <label class="upload-zone block border-2 border-dashed border-slate-300 rounded-lg p-4 text-center cursor-pointer transition-all">
+                            <input type="file" class="hidden">
+                            <span class="text-xs text-slate-400">Upload Policy Document</span>
+                        </label>
+                    </div>
+                </div>
+                <!-- Code of Ethics -->
+                <div class="asset-card bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col h-full">
+                    <h4 class="font-bold text-slate-800 mb-2">Code of Ethics</h4>
+                    <p class="text-sm text-slate-500 mb-6 italic">Company-wide standards for responsible AI development.</p>
+                    <div class="mt-auto">
+                        <label class="upload-zone block border-2 border-dashed border-slate-300 rounded-lg p-4 text-center cursor-pointer transition-all">
+                            <input type="file" class="hidden">
+                            <span class="text-xs text-slate-400">Upload Ethics Charter</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Studio Day 4: Accountability & Disclosure -->
+        <section class="mb-12">
+            <div class="flex items-center space-x-2 mb-6">
+                <span class="flex items-center justify-center w-8 h-8 rounded-full bg-blue-600 text-white text-sm font-bold">4</span>
+                <h3 class="text-xl font-bold text-slate-800 tracking-tight">Public Trust & Accountability</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Algorithmic Accountability Guideline -->
+                <div class="asset-card bg-blue-50/50 p-8 rounded-xl border-2 border-blue-100 shadow-sm flex flex-col h-full ring-2 ring-blue-600 ring-offset-2">
+                    <div class="flex items-center space-x-2 mb-2">
+                        <h4 class="font-bold text-slate-800">Algorithmic Accountability Guideline</h4>
+                        <span class="bg-blue-600 text-white text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-tighter">Procurement Ready</span>
+                    </div>
+                    <p class="text-sm text-slate-500 mb-6 italic">Public declaration of logic, API dependencies, and data sovereignty.</p>
+                    <div class="mt-auto">
+                        <label class="upload-zone block border-2 border-dashed border-blue-300 bg-white rounded-lg p-8 text-center cursor-pointer transition-all hover:bg-blue-50">
+                            <input type="file" class="hidden">
+                            <span class="text-sm font-semibold text-blue-600 block mb-1">Click to Upload Accountability Pack</span>
+                            <span class="text-xs text-slate-400">Required: Third-party APIs & Hosting Details</span>
+                        </label>
+                    </div>
+                </div>
+                <!-- Customer Disclosure Statement -->
+                <div class="asset-card bg-blue-50/50 p-8 rounded-xl border-2 border-blue-100 shadow-sm flex flex-col h-full ring-2 ring-blue-600 ring-offset-2">
+                    <div class="flex items-center space-x-2 mb-2">
+                        <h4 class="font-bold text-slate-800">Customer Disclosure Statement</h4>
+                        <span class="bg-blue-600 text-white text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-tighter">B2C/User Facing</span>
+                    </div>
+                    <p class="text-sm text-slate-500 mb-6 italic">Onboarding copy explaining AI interaction and human fallbacks.</p>
+                    <div class="mt-auto">
+                        <label class="upload-zone block border-2 border-dashed border-blue-300 bg-white rounded-lg p-8 text-center cursor-pointer transition-all hover:bg-blue-50">
+                            <input type="file" class="hidden">
+                            <span class="text-sm font-semibold text-blue-600 block mb-1">Click to Upload UI Screens/Copy</span>
+                            <span class="text-xs text-slate-400">Must include fallback & bias control statements</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 py-12 mt-12">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <p class="text-slate-400 text-xs mb-4">Certified Public AI Trust Pack — Compiled for Studio Day 4 Demo Prep</p>
+            <div class="flex justify-center space-x-6 grayscale opacity-50">
+                <span class="text-[10px] font-bold text-slate-600 border border-slate-300 px-2 py-1">Pillar 4: Data Sovereignty</span>
+                <span class="text-[10px] font-bold text-slate-600 border border-slate-300 px-2 py-1">Pillar 6: Ethical Governance</span>
+                <span class="text-[10px] font-bold text-slate-600 border border-slate-300 px-2 py-1">ARISE Framework</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Simple visual feedback for uploads
+        document.querySelectorAll('input[type="file"]').forEach(input => {
+            input.addEventListener('change', function(e) {
+                if (this.files && this.files) {
+                    const label = this.closest('label');
+                    const fileName = this.files.name;
+                    label.classList.remove('border-slate-300', 'border-blue-300');
+                    label.classList.add('border-green-500', 'bg-green-50');
+                    label.querySelector('span').innerText = '✅ ' + fileName;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
