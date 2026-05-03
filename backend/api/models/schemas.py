@@ -48,6 +48,21 @@ class Explanation(BaseModel):
     impact: str  # "High" | "Medium" | "Low"
 
 
+class ComponentBreakdown(BaseModel):
+    historical_risk         : str = Field(..., description="Explanation of historical flood risk component")
+    structural_vulnerability: str = Field(..., description="Explanation of structural vulnerability component")
+    extreme_scenario_risk   : str = Field(..., description="Explanation of extreme scenario risk component")
+
+
+class LLMExplanation(BaseModel):
+    narrative      : str
+    breakdown      : Optional[ComponentBreakdown] = Field(None, description="Per-component breakdown explanation")
+    provider       : str = Field(..., description="Gemini, OpenAI, or Ollama")
+    status         : str = Field(..., description="success or error")
+    embedding      : Optional[List[float]] = Field(None, description="Semantic embedding vector")
+    context_length : int
+
+
 class DecisionSupport(BaseModel):
     action: DecisionAction
     label : str
@@ -58,6 +73,8 @@ class ScoreMeta(BaseModel):
     data_freshness   : str
     processing_time_ms: int
     data_completeness: str  # "high" | "medium" | "low"
+    llm_enabled: Optional[bool] = None
+    llm_provider: Optional[str] = None
 
 
 class ScoreResponse(BaseModel):
@@ -69,4 +86,5 @@ class ScoreResponse(BaseModel):
     decision_support : DecisionSupport
     confidence       : float = Field(..., ge=0, le=1)
     warning          : Optional[str] = None
+    llm_explanation  : Optional[LLMExplanation] = None
     meta             : ScoreMeta

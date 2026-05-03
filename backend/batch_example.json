@@ -1,0 +1,32 @@
+[
+  {
+    "score": 25,
+    "risk_level": "Low",
+    "zone_name": "Almadies",
+    "address": "Arrondissement des Almadies, Dakar",
+    "lang": "fr",
+    "components": {
+      "historical_risk": 0,
+      "structural_vulnerability": 60.6,
+      "extreme_scenario_risk": 62
+    },
+    "explanations": [
+      {"factor": "Almadies Ngor — 30% historical flood frequency", "impact": "Medium"}
+    ]
+  },
+  {
+    "score": 78,
+    "risk_level": "High",
+    "zone_name": "Pikine",
+    "address": "Pikine Technopole, Dakar",
+    "lang": "fr",
+    "components": {
+      "historical_risk": 85,
+      "structural_vulnerability": 70,
+      "extreme_scenario_risk": 80
+    },
+    "explanations": [
+      {"factor": "Pikine — zone inondable récurrente depuis 2009", "impact": "High"}
+    ]
+  }
+]
