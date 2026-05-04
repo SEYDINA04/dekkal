@@ -2,8 +2,9 @@
 Dëkkal — FastAPI Application v2.0
 XGBoost + Gemini LLM Explainer
 """
+import os
 from dotenv import load_dotenv
-load_dotenv()  # charge .env avant tout import de service
+load_dotenv()
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,17 +12,14 @@ from fastapi.responses import JSONResponse
 from api.routers.score import router as score_router
 from api.routers.batch_llm import router as batch_llm_router
 
+_raw = os.getenv("ALLOWED_ORIGINS", "https://dekkal-public.vercel.app")
+allowed_origins = [o.strip() for o in _raw.split(",") if o.strip()]
+
 app = FastAPI(
     title="Dëkkal Flood Risk API",
     description="Address-level flood risk scoring + Gemini LLM explanations for IARD insurers in Dakar, Senegal",
     version="2.0.0",
 )
-
-import os
-
-_default_origins = "https://dekkal-public.vercel.app"
-_raw = os.getenv("ALLOWED_ORIGINS", _default_origins)
-allowed_origins = [o.strip() for o in _raw.split(",") if o.strip()]
 
 app.add_middleware(
     CORSMiddleware,
