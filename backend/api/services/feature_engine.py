@@ -6,20 +6,24 @@ Author : Babacar Ndao
 import ee
 import datetime
 
-ee.Initialize(project='dekkal-04')
-
-DEM     = ee.Image('USGS/SRTMGL1_003')
-TERRAIN = ee.Algorithms.Terrain(DEM)
-JRC     = ee.Image('JRC/GSW1_4/GlobalSurfaceWater').select('occurrence').gt(80)
-CHIRPS  = ee.ImageCollection('UCSB-CHG/CHIRPS/DAILY').select('precipitation')
-S1      = ee.ImageCollection('COPERNICUS/S1_GRD')
+_ee_initialized = False
 WATER_THRESHOLD = -20
 
 
+def _init_ee():
+    global _ee_initialized
+    if not _ee_initialized:
+        ee.Initialize(project='dekkal-04')
+        _ee_initialized = True
+
+
 def get_terrain_features(lat: float, lon: float) -> dict:
-    pt    = ee.Geometry.Point([lon, lat])
-    buf   = pt.buffer(100)
-    stats = TERRAIN.select(['elevation', 'slope']) \
+    _init_ee()
+    dem     = ee.Image('USGS/SRTMGL1_003')
+    terrain = ee.Algorithms.Terrain(dem)
+    pt      = ee.Geometry.Point([lon, lat])
+    buf     = pt.buffer(100)
+    stats   = terrain.select(['elevation', 'slope']) \
         .reduceRegion(reducer=ee.Reducer.mean(),
                       geometry=buf, scale=30).getInfo()
     elev  = stats.get('elevation', 10.0) or 10.0
@@ -32,9 +36,11 @@ def get_terrain_features(lat: float, lon: float) -> dict:
 
 
 def get_precipitation_features(lat: float, lon: float) -> dict:
-    pt  = ee.Geometry.Point([lon, lat])
-    buf = pt.buffer(5000)
-    p   = (CHIRPS
+    _init_ee()
+    chirps = ee.ImageCollection('UCSB-CHG/CHIRPS/DAILY').select('precipitation')
+    pt     = ee.Geometry.Point([lon, lat])
+    buf    = pt.buffer(5000)
+    p      = (chirps
         .filter(ee.Filter.calendarRange(6, 10, 'month'))
         .reduce(ee.Reducer.percentile([95, 99]))
         .reduceRegion(reducer=ee.Reducer.mean(),
@@ -48,19 +54,21 @@ def get_precipitation_features(lat: float, lon: float) -> dict:
 
 
 def get_sar_features(lat: float, lon: float) -> dict:
+    _init_ee()
+    jrc = ee.Image('JRC/GSW1_4/GlobalSurfaceWater').select('occurrence').gt(80)
+    s1  = ee.ImageCollection('COPERNICUS/S1_GRD')
     pt  = ee.Geometry.Point([lon, lat])
-    # Buffer 500m — 100m trop petit pour SAR 10m resolution
     buf = pt.buffer(500)
 
     def compute_area(start, end):
-        col = (S1.filterBounds(buf)
+        col = (s1.filterBounds(buf)
             .filterDate(start, end)
             .filter(ee.Filter.eq('instrumentMode', 'IW'))
             .filter(ee.Filter.eq('orbitProperties_pass', 'ASCENDING'))
             .select('VV'))
         if col.size().getInfo() == 0:
             return 0.0
-        mask = col.min().lt(WATER_THRESHOLD).where(JRC, 0)
+        mask = col.min().lt(WATER_THRESHOLD).where(jrc, 0)
         area = mask.multiply(ee.Image.pixelArea()) \
             .reduceRegion(reducer=ee.Reducer.sum(),
                           geometry=buf, scale=30,
@@ -77,6 +85,7 @@ def get_sar_features(lat: float, lon: float) -> dict:
 
 
 def get_soil_features(lat: float, lon: float) -> dict:
+    _init_ee()
     clay = ee.Image("projects/soilgrids-isric/clay_mean")
     sand = ee.Image("projects/soilgrids-isric/sand_mean")
     pt   = ee.Geometry.Point([lon, lat])
@@ -98,6 +107,7 @@ def get_soil_features(lat: float, lon: float) -> dict:
 
 
 def get_era5_soil_moisture(lat: float, lon: float) -> dict:
+    _init_ee()
     now   = datetime.datetime.utcnow()
     start = (now - datetime.timedelta(days=30)).strftime('%Y-%m-%d')
     end   = now.strftime('%Y-%m-%d')

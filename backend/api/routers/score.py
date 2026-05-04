@@ -71,7 +71,13 @@ async def score_address(
         })
 
     # ML Scoring — XGBoost
-    result = predict_flood_risk(features)
+    try:
+        result = predict_flood_risk(features)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail={
+            "error": "prediction_failed",
+            "detail": str(e)
+        })
 
     warning = None
     if result['confidence'] < 0.5:

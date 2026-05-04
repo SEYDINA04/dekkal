@@ -1,0 +1,11 @@
+version: "3"
+
+tunnels:
+  dekkal:
+    proto: http
+    addr: 5174
+    schemes:
+      - https
+    request_header:
+      add:
+        - "ngrok-skip-browser-warning: true"
