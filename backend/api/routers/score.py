@@ -83,11 +83,7 @@ async def score_address(
     if result['confidence'] < 0.5:
         warning = "Low confidence — limited data for this location"
 
-    components = {
-        "historical_risk"         : round(features.get('sar_delta_km2', 0) * 100, 1),
-        "structural_vulnerability": round((1 - features.get('elevation_m', 10) / 20) * 100, 1),
-        "extreme_scenario_risk"   : round(min(100, features.get('p99_mm_day', 34) / 50 * 100), 1),
-    }
+    components = result['components']
 
     # Generate LLM explanation with Gemini (optional)
     llm_explanation = None

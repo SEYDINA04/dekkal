@@ -81,45 +81,48 @@ Reply ONLY with this JSON (no markdown, no surrounding text):
   }}
 }}"""
 
-    try:
-        response = _get_client().models.generate_content(
-            model="models/gemini-2.5-flash",
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                response_mime_type="application/json"
+    models_to_try = ["gemini-flash-latest", "gemini-flash-lite-latest", "gemini-2.0-flash-001", "gemini-2.5-flash-lite"]
+    last_error = None
+
+    for model in models_to_try:
+        try:
+            response = _get_client().models.generate_content(
+                model=model,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json"
+                )
             )
-        )
-        raw = response.text.strip()
-        parsed = json.loads(raw)
-        return {
-            "status"        : "success",
-            "narrative"     : parsed.get("narrative", ""),
-            "breakdown"     : parsed.get("breakdown"),
-            "provider"      : "gemini",
-            "context_length": len(prompt)
-        }
-    except json.JSONDecodeError:
-        # Gemini returned non-JSON — extract narrative best-effort
-        return {
-            "status"        : "success",
-            "narrative"     : response.text.strip() if 'response' in dir() else "",
-            "breakdown"     : None,
-            "provider"      : "gemini",
-            "context_length": len(prompt)
-        }
-    except Exception as e:
-        return {
-            "status"        : "error",
-            "narrative"     : (f"Score {score}/100 ({risk_level}). "
-                               f"Main factor: {explanations[0]['factor'] if explanations else 'N/A'}."),
-            "breakdown"     : {
-                "historical_risk"         : f"Score: {hist}/100",
-                "structural_vulnerability": f"Score: {struct}/100",
-                "extreme_scenario_risk"   : f"Score: {extreme}/100"
-            },
-            "provider"      : "gemini",
-            "context_length": 0
-        }
+            raw = response.text.strip()
+            parsed = json.loads(raw)
+            return {
+                "status"        : "success",
+                "narrative"     : parsed.get("narrative", ""),
+                "breakdown"     : parsed.get("breakdown"),
+                "provider"      : "gemini",
+                "context_length": len(prompt)
+            }
+        except json.JSONDecodeError:
+            return {
+                "status"        : "success",
+                "narrative"     : response.text.strip(),
+                "breakdown"     : None,
+                "provider"      : "gemini",
+                "context_length": len(prompt)
+            }
+        except Exception as e:
+            last_error = e
+            print(f"⚠️  Gemini {model} failed: {type(e).__name__}: {str(e)[:120]}")
+            continue
+
+    print(f"⚠️  All Gemini models failed. Last error: {last_error}")
+    return {
+        "status"        : "error",
+        "narrative"     : f"AI analysis unavailable ({type(last_error).__name__}).",
+        "breakdown"     : None,
+        "provider"      : "gemini",
+        "context_length": 0
+    }
 
 
 _SENEGAL_KEYWORDS = {'dakar', 'pikine', 'sénégal', 'senegal', 'thiès', 'rufisque', 'mbour', 'saint-louis'}
