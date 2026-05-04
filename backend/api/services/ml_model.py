@@ -25,7 +25,7 @@ ZONE_SAR = {
     "Guediawaye"       : {"sar_delta_km2": 0.45, "sar_wet_km2": 0.52, "sar_dry_km2": 0.07},
     "Almadies_Ngor"    : {"sar_delta_km2": 0.02, "sar_wet_km2": 0.05, "sar_dry_km2": 0.03},
     "Plateau_Dakar"    : {"sar_delta_km2": 0.01, "sar_wet_km2": 0.03, "sar_dry_km2": 0.02},
-    "Keur_Massar"      : {"sar_delta_km2": 0.45, "sar_wet_km2": 0.52, "sar_dry_km2": 0.07},
+    "Keur_Massar"      : {"sar_delta_km2": 0.08, "sar_wet_km2": 0.12, "sar_dry_km2": 0.04},
 }
 DEFAULT_SAR = {"sar_delta_km2": 0.10, "sar_wet_km2": 0.15, "sar_dry_km2": 0.05}
 

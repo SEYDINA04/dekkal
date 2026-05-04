@@ -31,7 +31,7 @@ ZONES = {
     },
     "Guediawaye": {
         "lat_min": 14.76, "lat_max": 14.85,
-        "lon_min": -17.42, "lon_max": -17.30,
+        "lon_min": -17.42, "lon_max": -17.33,
         "risk_score_mean": 78.3,
         "risk_score_max" : 94.1,
         "flood_frequency": 0.8,
@@ -46,12 +46,12 @@ ZONES = {
         "elevation_mean" : 12.5,
     },
     "Keur_Massar": {
-        "lat_min": 14.69, "lat_max": 14.76,
-        "lon_min": -17.32, "lon_max": -17.22,
-        "risk_score_mean": 44.1,
-        "risk_score_max" : 90.6,
-        "flood_frequency": 0.7,
-        "elevation_mean" : 10.32,
+        "lat_min": 14.69, "lat_max": 14.84,
+        "lon_min": -17.33, "lon_max": -17.20,
+        "risk_score_mean": 38.0,
+        "risk_score_max" : 72.0,
+        "flood_frequency": 0.35,
+        "elevation_mean" : 11.5,
     },
 }
 
