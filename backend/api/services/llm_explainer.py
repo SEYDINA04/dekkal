@@ -29,18 +29,21 @@ def generate_explanation(
     components: dict,
     explanations: list,
     address: str = "",
-    lang: str = "en"
+    lang: str = "en",
+    property_type: str = "residential"
 ) -> dict:
-    hist   = components.get('historical_risk', 0)
-    struct = components.get('structural_vulnerability', 0)
+    hist    = components.get('historical_risk', 0)
+    struct  = components.get('structural_vulnerability', 0)
     extreme = components.get('extreme_scenario_risk', 0)
-    facts  = "\n".join([f"- {e['factor']} (impact: {e['impact']})" for e in explanations])
+    facts   = "\n".join([f"- {e['factor']} (impact: {e['impact']})" for e in explanations])
+    ptype   = property_type.replace("_", " ").capitalize()
 
     if lang == "fr":
         prompt = f"""Tu es un expert en risque d'inondation pour les assureurs IARD au Sénégal.
 Analyse ce score de risque et génère une réponse JSON structurée pour un souscripteur.
 
 Adresse : {address or zone_name}
+Type de propriété : {ptype}
 Score global : {score}/100 | Niveau : {risk_level}
 Composants :
   - Risque historique       : {hist}/100
@@ -63,6 +66,7 @@ Réponds UNIQUEMENT avec ce JSON (sans markdown, sans texte autour) :
 Analyze this risk score and generate a structured JSON response for an underwriter.
 
 Address: {address or zone_name}
+Property type: {ptype}
 Overall score: {score}/100 | Level: {risk_level}
 Components:
   - Historical risk            : {hist}/100

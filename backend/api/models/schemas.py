@@ -21,17 +21,27 @@ class DecisionAction(str, Enum):
     MANDATORY_HUMAN_DECISION      = "mandatory_human_decision"
 
 
+class PropertyType(str, Enum):
+    RESIDENTIAL = "residential"
+    COMMERCIAL  = "commercial"
+    HOSPITAL    = "hospital"
+    SCHOOL      = "school"
+    HOTEL       = "hotel"
+    WAREHOUSE   = "warehouse"
+
+
 # ── INPUT ────────────────────────────────────────────────
 class ScoreRequest(BaseModel):
-    address : Optional[str]   = Field(None, example="Pikine Technopole, Dakar")
-    lat     : Optional[float] = Field(None, example=14.75)
-    lon     : Optional[float] = Field(None, example=-17.39)
+    address       : Optional[str]          = Field(None, example="Pikine Technopole, Dakar")
+    lat           : Optional[float]        = Field(None, example=14.75)
+    lon           : Optional[float]        = Field(None, example=-17.39)
+    property_type : Optional[PropertyType] = Field(PropertyType.RESIDENTIAL, description="Type of property being assessed")
 
     class Config:
         json_schema_extra = {
             "examples": [
-                {"address": "Almadies, Dakar"},
-                {"lat": 14.734, "lon": -17.510}
+                {"address": "Almadies, Dakar", "property_type": "residential"},
+                {"lat": 14.734, "lon": -17.510, "property_type": "hospital"}
             ]
         }
 

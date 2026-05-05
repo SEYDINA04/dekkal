@@ -30,10 +30,20 @@ ZONE_SAR = {
 }
 DEFAULT_SAR = {"sar_delta_km2": 0.10, "sar_wet_km2": 0.15, "sar_dry_km2": 0.05}
 
+# Structural vulnerability multiplier by property type
+PROPERTY_VULNERABILITY = {
+    "residential": 1.0,
+    "commercial" : 1.1,
+    "hotel"      : 1.15,
+    "school"     : 1.25,
+    "hospital"   : 1.4,
+    "warehouse"  : 0.85,
+}
+
 print(f"✓ XGBoost v3.1 loaded | Recall=95.8% | Zone SAR lookup active")
 
 
-def predict_flood_risk(features: dict) -> dict:
+def predict_flood_risk(features: dict, property_type: str = "residential") -> dict:
     lat = features.get('_lat', 14.75)
     lon = features.get('_lon', -17.39)
 
@@ -123,16 +133,29 @@ def predict_flood_risk(features: dict) -> dict:
     has_precip = 1 if features.get('p99_mm_day') else 0
     confidence = round((has_zone + has_elev + has_precip) / 3, 2)
 
+    # Property-type vulnerability adjustment
+    vuln_mult = PROPERTY_VULNERABILITY.get(property_type, 1.0)
+    raw_vuln  = max(0, (1 - elevation / 20)) * 100
+    adj_vuln  = round(min(100, raw_vuln * vuln_mult), 1)
+
+    if vuln_mult > 1.0 and property_type not in ("residential",):
+        ptype_label = property_type.replace("_", " ").capitalize()
+        explanations.append({
+            "factor": f"{ptype_label} — higher structural exposure to flood damage",
+            "impact": "High" if vuln_mult >= 1.3 else "Medium"
+        })
+
     return {
         'score'           : score,
         'risk_level'      : risk_level,
         'zone_name'       : zone_name or "Unknown",
+        'property_type'   : property_type,
         'components'      : {
             'historical_risk'         : round(sar['sar_delta_km2'] * 100, 1),
-            'structural_vulnerability': round(max(0, (1 - elevation/20)) * 100, 1),
-            'extreme_scenario_risk'   : round(min(100, features.get('p99_mm_day',34)/50*100), 1),
+            'structural_vulnerability': adj_vuln,
+            'extreme_scenario_risk'   : round(min(100, features.get('p99_mm_day', 34) / 50 * 100), 1),
         },
-        'explanations'    : explanations[:3],
+        'explanations'    : explanations[:4],
         'decision_support': {'action': action, 'label': label},
         'confidence'      : confidence,
         'model_type'      : 'xgboost_v3_pikine',

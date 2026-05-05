@@ -71,8 +71,9 @@ async def score_address(
         })
 
     # ML Scoring — XGBoost
+    property_type = (request.property_type.value if request.property_type else "residential")
     try:
-        result = predict_flood_risk(features)
+        result = predict_flood_risk(features, property_type=property_type)
     except Exception as e:
         raise HTTPException(status_code=500, detail={
             "error": "prediction_failed",
@@ -95,13 +96,14 @@ async def score_address(
             )) else "en"
         try:
             llm_result = generate_explanation(
-                score       =result['score'],
-                risk_level  =result['risk_level'],
-                zone_name   =result.get('zone_name', 'Unknown'),
-                components  =components,
-                explanations=result['explanations'],
-                address     =address_normalized,
-                lang        =lang
+                score         =result['score'],
+                risk_level    =result['risk_level'],
+                zone_name     =result.get('zone_name', 'Unknown'),
+                components    =components,
+                explanations  =result['explanations'],
+                address       =address_normalized,
+                lang          =lang,
+                property_type =property_type
             )
             llm_explanation = {
                 "status"        : llm_result.get("status", "error"),
