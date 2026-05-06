@@ -8,7 +8,7 @@ from fastapi import APIRouter, HTTPException, Query
 from api.models.schemas import ScoreRequest, ScoreResponse
 from api.services.feature_engine import extract_all_features
 from api.services.ml_model import predict_flood_risk
-from api.services.geocoder import geocode_address, suggest_alternatives
+from api.services.geocoder import geocode_address, reverse_geocode, suggest_alternatives
 from api.services.llm_explainer import generate_explanation
 
 router = APIRouter(prefix="/api/v1", tags=["scoring"])
@@ -46,7 +46,7 @@ async def score_address(
     # Geocoding
     if request.lat is not None and request.lon is not None:
         lat, lon = request.lat, request.lon
-        address_normalized = f"{lat}, {lon}"
+        address_normalized = reverse_geocode(lat, lon)
     else:
         try:
             lat, lon, address_normalized = geocode_address(

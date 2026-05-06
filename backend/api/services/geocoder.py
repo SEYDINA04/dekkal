@@ -80,6 +80,22 @@ def geocode_address(address: str) -> Tuple[float, float, str]:
         raise ValueError(f"Geocoding service error: {str(e)}")
 
 
+def reverse_geocode(lat: float, lon: float) -> str:
+    """Reverse geocode lat/lon to a readable address string."""
+    try:
+        location = geolocator.reverse(
+            (lat, lon),
+            language="en",
+            exactly_one=True,
+            zoom=16,
+        )
+        if location and location.address:
+            return location.address
+    except Exception:
+        pass
+    return f"{lat:.5f}, {lon:.5f}"
+
+
 def suggest_alternatives(address: str) -> list:
     """Retourne jusqu'à 3 suggestions pour une adresse ambiguë."""
     query = address
