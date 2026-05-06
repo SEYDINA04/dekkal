@@ -35,9 +35,13 @@ Thumbs.db
 
 # Logs
 *.log
-# Modèles ML — trop lourds pour git
+# Modèles ML — trop lourds pour git (exceptions: petits modèles Dëkkal)
 *.pkl
 *.joblib
+!backend/dekkal_xgboost_v1.pkl
+!backend/dekkal_xgboost_v3.pkl
+!backend/dekkal_xgboost_features.pkl
+!backend/dekkal_xgboost_features_v3.pkl
 
 # Données sensibles
 data-pipeline/dekkal_pikine*.csv

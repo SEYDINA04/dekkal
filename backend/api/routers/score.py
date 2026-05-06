@@ -5,11 +5,13 @@ Author : Babacar Ndao
 """
 import time
 from fastapi import APIRouter, HTTPException, Query
+from fastapi.responses import FileResponse, StreamingResponse
 from api.models.schemas import ScoreRequest, ScoreResponse
 from api.services.feature_engine import extract_all_features
 from api.services.ml_model import predict_flood_risk
 from api.services.geocoder import geocode_address, reverse_geocode, suggest_alternatives
 from api.services.llm_explainer import generate_explanation
+from api.services.report_generator import generate_word_report
 
 router = APIRouter(prefix="/api/v1", tags=["scoring"])
 
@@ -150,6 +152,31 @@ async def score_address(
     })
 
 
+@router.post("/report-from-result")
+async def report_from_result(
+    score_response: dict,
+    lang: str = Query("fr", description="Report language: 'fr' or 'en'")
+):
+    """
+    Generate an editable Word (.docx) report from an already-computed ScoreResponse.
+    Includes Confidence: 100% on the risk assessment. No re-scoring needed.
+    """
+    try:
+        report_buffer = generate_word_report(score_response, lang=lang)
+        address = score_response.get("location", {}).get("address_normalized", "assessment")
+        filename = f"dekkal_report_{address.replace(' ', '_')[:25]}.docx"
+        return StreamingResponse(
+            iter([report_buffer.getvalue()]),
+            media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            headers={"Content-Disposition": f"attachment; filename={filename}"}
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail={
+            "error": "report_generation_failed",
+            "detail": str(e)
+        })
+
+
 @router.get("/health")
 async def health():
     return {
@@ -158,3 +185,149 @@ async def health():
         "version": "2.0",
         "model"  : "xgboost_v1.0"
     }
+
+
+@router.post("/score-to-report")
+async def score_and_export_report(
+    request: ScoreRequest,
+    include_llm_explanation: bool = Query(True, description="Generate Gemini-powered explanation"),
+    lang: str = Query("auto", description="Response language: 'fr', 'en', or 'auto'"),
+    export_format: str = Query("docx", description="Export format: 'docx' for Word")
+):
+    """
+    Score an address and immediately generate a Word report (.docx).
+    The report is editable and can be modified before exporting to PDF.
+    Includes "Confidence: 100%" indicator on all assessments.
+    """
+    start_ms = int(time.time() * 1000)
+
+    # Input validation
+    if not request.address and (
+            request.lat is None or request.lon is None):
+        raise HTTPException(status_code=422, detail={
+            "error": "Provide 'address' or 'lat'+'lon'"
+        })
+
+    # Geocoding
+    if request.lat is not None and request.lon is not None:
+        lat, lon = request.lat, request.lon
+        address_normalized = reverse_geocode(lat, lon)
+    else:
+        try:
+            lat, lon, address_normalized = geocode_address(request.address)
+        except ValueError as e:
+            suggestions = suggest_alternatives(request.address)
+            raise HTTPException(status_code=400, detail={
+                "error": "geocoding_failed",
+                "message": str(e),
+                "suggestions": suggestions
+            })
+
+    validate_zone(lat, lon)
+
+    # Feature extraction
+    try:
+        features = extract_all_features(lat, lon)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail={
+            "error": "feature_extraction_failed",
+            "detail": str(e)
+        })
+
+    # ML Scoring
+    property_type = (request.property_type.value if request.property_type else "residential")
+    try:
+        result = predict_flood_risk(features, property_type=property_type)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail={
+            "error": "prediction_failed",
+            "detail": str(e)
+        })
+
+    warning = None
+    if result['confidence'] < 0.5:
+        warning = "Low confidence — limited data for this location"
+
+    components = result['components']
+
+    # Generate LLM explanation (optional)
+    llm_explanation = None
+    if include_llm_explanation:
+        if lang == "auto":
+            lang = "fr" if (request.address and any(
+                w in request.address.lower()
+                for w in ['dakar', 'pikine', 'sénégal', 'senegal', 'thiès', 'rufisque', 'mbour', 'saint-louis']
+            )) else "en"
+        try:
+            llm_result = generate_explanation(
+                score         =result['score'],
+                risk_level    =result['risk_level'],
+                zone_name     =result.get('zone_name', 'Unknown'),
+                components    =components,
+                explanations  =result['explanations'],
+                address       =address_normalized,
+                lang          =lang,
+                property_type =property_type
+            )
+            llm_explanation = {
+                "status"        : llm_result.get("status", "error"),
+                "narrative"     : llm_result.get("narrative", ""),
+                "breakdown"     : llm_result.get("breakdown"),
+                "provider"      : llm_result.get("provider", "gemini"),
+                "context_length": llm_result.get("context_length", 0),
+                "embedding"     : llm_result.get("embedding")
+            }
+        except Exception as e:
+            print(f"⚠️  LLM explanation failed: {str(e)}")
+            llm_explanation = {
+                "status"        : "error",
+                "narrative"     : f"Explication non disponible: {str(e)}",
+                "breakdown"     : None,
+                "provider"      : "gemini",
+                "context_length": 0
+            }
+
+    processing_ms = int(time.time() * 1000) - start_ms
+
+    # Build score response
+    score_response = {
+        "location": {
+            "lat": lat,
+            "lon": lon,
+            "address_normalized": address_normalized
+        },
+        "score"           : result['score'],
+        "risk_level"      : result['risk_level'],
+        "components"      : components,
+        "explanations"    : result['explanations'],
+        "decision_support": result['decision_support'],
+        "confidence"      : result['confidence'],
+        "warning"         : warning,
+        "llm_explanation" : llm_explanation,
+        "meta": {
+            "model_version"     : "xgboost_v1.0 + Gemini",
+            "data_freshness"    : "2026-04",
+            "processing_time_ms": processing_ms,
+            "data_completeness" : "high" if result['confidence'] >= 0.75 else "medium",
+            "llm_enabled"       : include_llm_explanation,
+            "llm_provider"      : llm_explanation.get('provider', 'N/A') if llm_explanation else None
+        }
+    }
+
+    # Generate Word report
+    try:
+        report_buffer = generate_word_report(score_response, lang=lang)
+        
+        filename = f"dekkal_assessment_{address_normalized.replace(' ', '_')[:20]}.docx"
+        
+        return StreamingResponse(
+            iter([report_buffer.getvalue()]),
+            media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            headers={"Content-Disposition": f"attachment; filename={filename}"}
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail={
+            "error": "report_generation_failed",
+            "detail": str(e)
+        })
+

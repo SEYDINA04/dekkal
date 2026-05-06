@@ -4,6 +4,7 @@ Batch explanations + semantic similarity search using Gemini embeddings
 Author: Babacar Ndao
 """
 from fastapi import APIRouter, UploadFile, File, Query
+from fastapi.responses import StreamingResponse
 from typing import List, Optional
 import json
 import tempfile
@@ -14,6 +15,7 @@ from api.services.llm_explainer import (
     similarity_search,
     vectorize_scenario_library
 )
+from api.services.report_generator import generate_word_report_batch
 
 router = APIRouter(prefix="/api/v1", tags=["batch-llm"])
 
@@ -160,3 +162,51 @@ async def llm_status():
             "embeddings": "models/embedding-001"
         }
     }
+
+
+@router.post("/batch-explain-to-report")
+async def batch_explain_and_export_report(
+    scores_file: UploadFile = File(..., description="JSON file with array of score responses"),
+    use_embeddings: bool = Query(False, description="Generate Gemini embeddings for each score"),
+    lang: str = Query("auto", description="Language for explanations: 'fr', 'en', or 'auto'")
+):
+    """
+    Generate LLM explanations for multiple flood risk scores and export as editable Word report.
+    The report includes "Confidence: 100%" for all assessments and can be modified before PDF export.
+    
+    Input: JSON file with array of score response objects
+    Output: .docx file with comprehensive report
+    """
+    try:
+        contents = await scores_file.read()
+        scores = json.loads(contents)
+
+        if not isinstance(scores, list):
+            scores = [scores]
+
+        # Apply lang override to each score if explicitly set
+        if lang in ("fr", "en"):
+            for s in scores:
+                s['lang'] = lang
+
+        # Generate explanations
+        results = generate_batch_explanations(
+            scores=scores,
+            use_embeddings=use_embeddings
+        )
+
+        # Generate Word report
+        report_buffer = generate_word_report_batch(results, lang=lang)
+        
+        filename = f"dekkal_batch_assessment_{len(results)}_properties.docx"
+        
+        return StreamingResponse(
+            iter([report_buffer.getvalue()]),
+            media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            headers={"Content-Disposition": f"attachment; filename={filename}"}
+        )
+
+    except json.JSONDecodeError:
+        return {"status": "error", "message": "Invalid JSON file"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
