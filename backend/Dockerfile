@@ -1,24 +1,18 @@
 FROM python:3.13-slim
 
-WORKDIR /workspace
+WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
+    curl gcc g++ libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip install uv --no-cache-dir
 
-# Copy workspace-level config (uv workspace)
-COPY pyproject.toml uv.lock ./
-COPY backend/pyproject.toml ./backend/
+COPY pyproject.toml .
+RUN uv pip install --system --no-cache .
 
-RUN uv sync --all-packages --no-dev
+COPY . .
 
-# Copy application code and model files
-COPY backend/ ./backend/
+EXPOSE 7860
 
-WORKDIR /workspace/backend
-
-EXPOSE 8001
-
-CMD ["uv", "run", "--project", "/workspace", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860"]

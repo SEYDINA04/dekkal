@@ -3,7 +3,7 @@ services:
   backend:
     build:
       context: .
-      dockerfile: backend/Dockerfile
+      dockerfile: backend/Dockerfile.workspace
     container_name: dekkal-backend
     ports:
       - "8001:8001"
