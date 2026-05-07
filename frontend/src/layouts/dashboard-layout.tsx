@@ -14,25 +14,43 @@ const navItems = [
 
 export function DashboardLayout() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
     <main className="min-h-screen bg-porcelain text-ink">
-      <div className={`grid min-h-screen transition-[grid-template-columns] duration-300 ${sidebarCollapsed ? "grid-cols-[76px_1fr]" : "grid-cols-[minmax(236px,76vw)_1fr] sm:grid-cols-[280px_1fr]"}`}>
-        <aside className={`sticky top-0 z-30 flex h-screen flex-col border-r border-slate-200 bg-white/90 backdrop-blur-xl transition-[padding] duration-300 ${sidebarCollapsed ? "p-3" : "p-4 sm:p-5"}`}>
-          <SidebarContent collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed((current) => !current)} />
+      {/* Mobile backdrop */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/30 sm:hidden"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      <div className={`grid min-h-screen transition-[grid-template-columns] duration-300 ${sidebarCollapsed ? "grid-cols-[76px_1fr]" : "grid-cols-[1fr] sm:grid-cols-[280px_1fr]"}`}>
+        {/* Sidebar — drawer on mobile, inline on sm+ */}
+        <aside className={`
+          fixed inset-y-0 left-0 z-50 flex h-screen flex-col border-r border-slate-200 bg-white/95 backdrop-blur-xl transition-transform duration-300
+          sm:sticky sm:translate-x-0 sm:bg-white/90
+          ${sidebarCollapsed ? "sm:w-[76px] sm:p-3" : "w-[280px] p-4 sm:p-5"}
+          ${mobileOpen ? "translate-x-0" : "-translate-x-full sm:translate-x-0"}
+        `}>
+          <SidebarContent
+            collapsed={sidebarCollapsed}
+            onToggle={() => { setSidebarCollapsed((c) => !c); setMobileOpen(false); }}
+          />
         </aside>
 
         <section className="min-w-0">
           <header className="sticky top-0 z-20 flex items-center justify-between gap-3 border-b border-slate-200 bg-porcelain/90 px-4 py-4 backdrop-blur-xl lg:px-8">
             <div className="flex min-w-0 items-center gap-3">
               <Button
-                aria-label={sidebarCollapsed ? "Expand dashboard navigation" : "Collapse dashboard navigation"}
+                aria-label="Open navigation"
                 className="shrink-0 rounded-full sm:hidden"
                 size="icon"
                 variant="outline"
-                onClick={() => setSidebarCollapsed((current) => !current)}
+                onClick={() => setMobileOpen((o) => !o)}
               >
-                {sidebarCollapsed ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}
+                {mobileOpen ? <PanelLeftClose size={18} /> : <PanelLeftOpen size={18} />}
               </Button>
               <div className="min-w-0">
               <p className="text-xs uppercase tracking-[0.24em] text-lead">Dëkkal Command Center</p>

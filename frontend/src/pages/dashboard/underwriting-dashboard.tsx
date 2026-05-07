@@ -561,10 +561,10 @@ export function UnderwritingDashboardPage() {
   };
 
   return (
-    <div className="flex overflow-hidden" style={{ height: "calc(100svh - 73px)" }}>
+    <div className="flex flex-col overflow-y-auto sm:flex-row sm:overflow-hidden sm:h-[calc(100svh-73px)]">
 
       {/* ── MAP (hero) ───────────────────────────────────── */}
-      <div className="relative flex-1 overflow-hidden">
+      <div className="relative h-[45vh] shrink-0 overflow-hidden sm:h-auto sm:flex-1">
         <MapContainer center={DAKAR_CENTER} zoom={11} minZoom={10} scrollWheelZoom className="h-full w-full">
           {mapMode === "street" ? (
             <TileLayer
@@ -698,7 +698,7 @@ export function UnderwritingDashboardPage() {
       </div>
 
       {/* ── RIGHT PANEL ──────────────────────────────────── */}
-      <div className="flex w-[380px] shrink-0 flex-col overflow-hidden border-l border-slate-200 bg-white">
+      <div className="flex w-full flex-col overflow-hidden border-t border-slate-200 bg-white sm:w-[380px] sm:shrink-0 sm:border-l sm:border-t-0">
 
         {/* Panel header */}
         <div className="shrink-0 border-b border-slate-100 px-5 py-4">
@@ -808,7 +808,7 @@ export function UnderwritingDashboardPage() {
         )}
 
         {/* Results — scrollable */}
-        <div className="min-h-0 flex-1 overflow-y-auto p-4">
+        <div className="min-h-0 flex-1 overflow-y-auto p-4 sm:max-h-none">
           {loading ? (
             <ScoringProgress active={loading} />
           ) : result ? (
