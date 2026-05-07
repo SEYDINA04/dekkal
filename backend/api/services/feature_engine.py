@@ -5,6 +5,8 @@ Author : Babacar Ndao
 """
 import ee
 import datetime
+import json
+import os
 
 _ee_initialized = False
 WATER_THRESHOLD = -20
@@ -12,9 +14,17 @@ WATER_THRESHOLD = -20
 
 def _init_ee():
     global _ee_initialized
-    if not _ee_initialized:
-        ee.Initialize(project='dekkal-04')
-        _ee_initialized = True
+    if _ee_initialized:
+        return
+    creds_json = os.getenv("EE_CREDENTIALS")
+    if creds_json:
+        # Cloud deployment: write credentials file for EE SDK
+        creds_dir = os.path.expanduser("~/.config/earthengine")
+        os.makedirs(creds_dir, exist_ok=True)
+        with open(os.path.join(creds_dir, "credentials"), "w") as f:
+            f.write(creds_json)
+    ee.Initialize(project="dekkal-04")
+    _ee_initialized = True
 
 
 def get_terrain_features(lat: float, lon: float) -> dict:
