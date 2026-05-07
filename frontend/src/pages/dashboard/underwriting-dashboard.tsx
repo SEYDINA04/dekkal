@@ -2,6 +2,7 @@ import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState, type Re
 import { CircleMarker, MapContainer, Rectangle, TileLayer, Tooltip, useMap, useMapEvents } from "react-leaflet";
 import type { LatLngBoundsExpression, LatLngExpression } from "leaflet";
 import { Brain, ChevronDown, ChevronUp, Info, MapPin, PencilLine, X } from "lucide-react";
+import dekkalLogo from "@/assets/officiel_dekkal_logo.png";
 import { Button } from "@/components/ui/button";
 import { downloadWordReport, normalizeUnknownError, scoreLocation } from "@/api";
 import { DAKAR_BOUNDS, DAKAR_CENTER, riskColors } from "@/lib/constants";
@@ -912,8 +913,27 @@ export function UnderwritingDashboardPage() {
             </div>
           ) : (
             <div className="flex h-full flex-col items-center justify-center px-6 text-center">
-              <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-3xl bg-mercury-blue/10">
-                <MapPin size={24} className="text-mercury-blue" />
+              <div className="relative mb-6 flex items-center justify-center" style={{ width: 160, height: 160 }}>
+                {[0, 1, 2].map((i) => (
+                  <span
+                    key={i}
+                    className="absolute rounded-full bg-mercury-blue/15"
+                    style={{
+                      width: 80,
+                      height: 80,
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%)",
+                      animation: `sonar-ring 2.4s ease-out ${i * 0.8}s infinite`,
+                    }}
+                  />
+                ))}
+                <div
+                  className="relative z-10 flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-xl shadow-mercury-blue/20 ring-1 ring-mercury-blue/20"
+                  style={{ animation: "float 3s ease-in-out infinite" }}
+                >
+                  <img src={dekkalLogo} alt="Dëkkal" className="h-14 w-14 object-contain" />
+                </div>
               </div>
               <h3 className="text-lg font-light text-ink">{tr.noScoreYet}</h3>
               <p className="mt-2 text-xs leading-6 text-slate-500">{tr.noScoreDesc}</p>
